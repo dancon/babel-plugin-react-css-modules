@@ -6,7 +6,7 @@ CSS Modules for react application.
 
 The purpose of the plugin is to improve the experience of development with CSS Modules in React Application.
 
-It's superfluous when use CSS Modules to add class name to a element, we have to write code like this `className={styles.foo}` and we can't use Emmet to finish our code smoothly.
+It's superfluous when use CSS Modules to add class name to an element, we have to write code like this `className={styles.foo}` and we can't use Emmet to finish our code smoothly.
 
 There are some solutions like HOC `react-css-modules` or babel plugin `babel-plugin-react-css-modules`, they are excellent and solve the most problems that bother you when developing. You can choose them when @pandolajs/babel-plugin-react-css-modules is not meet your situation.
 
