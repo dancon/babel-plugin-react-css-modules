@@ -1,0 +1,20 @@
+{
+  "name": "babel-plugin-react-css-modules",
+  "version": "1.0.0",
+  "description": "CSS Modules for react",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dancon/babel-plugin-react-css-modules.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dancon/babel-plugin-react-css-modules/issues"
+  },
+  "homepage": "https://github.com/dancon/babel-plugin-react-css-modules#readme"
+}
