@@ -6,31 +6,43 @@
 
 const types = require('@babel/types')
 
-const { CLASSNAMES, CLASSNAMESOURCE } = require('./constant')
-
-function hasClassnamesImport (program, importSrc) {
-  const impSrc = types.stringLiteral(importSrc || CLASSNAMES)
+function getClassnamesImport (program, importSrc) {
   const body = program.get('body')
 
-  return body.some(nodePath => {
-    return nodePath.isImportDeclaration({
-      source: impSrc
-    })
+  return body.find(nodePath => {
+    if (nodePath.isImportDeclaration()) {
+      const { node } = nodePath.get('source')
+      return node.value === importSrc
+    }
+
+    return false
   })
 }
 
 module.exports = {
-  hasClassnamesImport,
+  getClassnamesImport,
+  insertClassnamesSepc (program, importSpec, importSrc, importDefault) {
+    const classNamesImpoDec = getClassnamesImport(program, importSrc)
 
-  getClassnamesSepc (program) {
+    if (classNamesImpoDec) {
+      const { specifiers } = classNamesImpoDec.node
 
-  },
+      if (specifiers.length === 1) {
+        return specifiers[0].local.name
+      } else {
+        const spec = specifiers.find(item => {
+          return item.local.name === importSpec
+        })
 
-  insertClassnamesSepc (program, importSpec, importSrc) {
-    if (!program.scope.hasBinding(CLSNAMES)) {
-      const classNameDefSpec = t.importDefaultSpecifier(t.identifier(CLSNAMES))
-      const classnamesImpo = t.importDeclaration([classNameDefSpec], t.stringLiteral('@pandolajs/classnames'))
-      program.unshiftContainer('body', classnamesImpo)
+        return spec ? spec.local.name : importSpec
+      }
     }
+
+    const identifier = types.identifier(importSpec)
+    const classNameDefSpec = importDefault ? types.importDefaultSpecifier(identifier) : types.importSpecifier(identifier, identifier)
+    const classnamesImpo = types.importDeclaration([classNameDefSpec], types.stringLiteral(importSrc))
+    program.unshiftContainer('body', classnamesImpo)
+
+    return importSpec
   }
 }

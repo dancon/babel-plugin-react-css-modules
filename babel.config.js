@@ -1,6 +1,9 @@
 module.exports = {
   plugins: [
-    ['./src/index.js', { test: true }]
-    /* 'babel-plugin-react-css-modules' */
+    ['./src/index.js', { classnames: {
+      name: 'classnames',
+      source: '@bbt/bbt-ui/utils',
+      default: false
+    } }]
   ]
 }

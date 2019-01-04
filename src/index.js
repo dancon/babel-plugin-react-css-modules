@@ -3,13 +3,15 @@
  * @author sizhao | 870301137@qq.com
  * @version 1.0.0 | 2019-01-03 | sizhao         // initial version
  */
+
+const p = require('path')
 const babelPluginSyntaxJSX = require('@babel/plugin-syntax-jsx')
+const { stringLiteral } = require('@babel/types')
 
 const { getClassName } = require('./utils/attributes')
-const { hasClassnamesImport } = require('./utils/import')
-const { CLASSNAMES, CLASSNAMESOURCE } = require('./constant')
-
-const CLSNAMES = 'classnames'
+const { insertClassnamesSepc } = require('./utils/import')
+let { CLASSNAMES, CLASSNAMESOURCE } = require('./utils/constant')
+let CLASSNAMEIMPORTDEFAULT = true
 
 module.exports = function (babel) {
   const { types: t } = babel
@@ -60,6 +62,8 @@ module.exports = function (babel) {
             if (vTokens.length === 1) {
               classNameVal = t.memberExpression(cssModules, className.value, true)
             } else {
+              CLASSNAMES = insertClassnamesSepc(program, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
+
               const valueObjProps = vTokens.map(token => {
                 const key = t.stringLiteral(token)
                 const val = t.booleanLiteral(true)
@@ -68,7 +72,7 @@ module.exports = function (babel) {
 
               const valueObj = t.objectExpression(valueObjProps)
               const args = [cssModules, valueObj]
-              const callee = t.identifier(CLSNAMES)
+              const callee = t.identifier(CLASSNAMES)
               classNameVal = t.callExpression(callee, args)
             }
 
@@ -79,6 +83,27 @@ module.exports = function (babel) {
         }
 
         path.replaceWith(node)
+      },
+
+      Program (path, state) {
+        const { opts: { classnames }, filename, cwd } = state
+
+        if (classnames) {
+          let { name, source, default: df = true } = classnames
+
+          if (name) {
+            CLASSNAMES = name
+          }
+
+          if (source) {
+            if (/^[./]/.test(source)) {
+              source = p.relative(p.dirname(filename), p.resolve(cwd, source))
+            }
+            CLASSNAMESOURCE = source
+          }
+
+          CLASSNAMEIMPORTDEFAULT = df
+        }
       }
     }
   }
