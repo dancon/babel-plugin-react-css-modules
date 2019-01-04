@@ -1,10 +1,12 @@
 {
-  "name": "babel-plugin-react-css-modules",
+  "name": "@pandolajs/babel-plugin-react-css-modules",
   "version": "1.0.0",
   "description": "CSS Modules for react",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel test/example --out-dir test/dist",
+    "debug": "node --nolazy --inspect-brk=9229 ./node_modules/.bin/babel test/example --out-dir test/dist"
   },
   "repository": {
     "type": "git",
@@ -16,5 +18,14 @@
   "bugs": {
     "url": "https://github.com/dancon/babel-plugin-react-css-modules/issues"
   },
-  "homepage": "https://github.com/dancon/babel-plugin-react-css-modules#readme"
+  "homepage": "https://github.com/dancon/babel-plugin-react-css-modules#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "babel-plugin-react-css-modules": "^5.0.0"
+  },
+  "dependencies": {
+    "@babel/plugin-syntax-jsx": "^7.2.0",
+    "@babel/types": "^7.2.2"
+  }
 }
