@@ -1,4 +1,4 @@
-import styles from './index.less'
+import './index.less'
 
 const jsx = (<div name='jioho' className='foo-baz bar' hello='world' />)
 

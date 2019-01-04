@@ -6,16 +6,16 @@
 
 const p = require('path')
 const babelPluginSyntaxJSX = require('@babel/plugin-syntax-jsx')
-const { stringLiteral } = require('@babel/types')
 
 const { getClassName } = require('./utils/attributes')
 const { insertClassnamesSepc } = require('./utils/import')
-let { CLASSNAMES, CLASSNAMESOURCE } = require('./utils/constant')
+let { CLASSNAMES, CLASSNAMESOURCE, DEFAULTCSSMODULES } = require('./utils/constant')
 let CLASSNAMEIMPORTDEFAULT = true
+let conflictCls = ''
 
 module.exports = function (babel) {
   const { types: t } = babel
-  let cssModules = t.identifier('_CSSM_')
+  let cssModules = t.identifier(DEFAULTCSSMODULES)
 
   return {
     inherits: babelPluginSyntaxJSX.default,
@@ -62,7 +62,7 @@ module.exports = function (babel) {
             if (vTokens.length === 1) {
               classNameVal = t.memberExpression(cssModules, className.value, true)
             } else {
-              CLASSNAMES = insertClassnamesSepc(program, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
+              CLASSNAMES = insertClassnamesSepc(program, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT, conflictCls)
 
               const valueObjProps = vTokens.map(token => {
                 const key = t.stringLiteral(token)
@@ -72,7 +72,7 @@ module.exports = function (babel) {
 
               const valueObj = t.objectExpression(valueObjProps)
               const args = [cssModules, valueObj]
-              const callee = t.identifier(CLASSNAMES)
+              const callee = t.identifier(conflictCls ? conflictCls : CLASSNAMES)
               classNameVal = t.callExpression(callee, args)
             }
 
@@ -103,6 +103,15 @@ module.exports = function (babel) {
           }
 
           CLASSNAMEIMPORTDEFAULT = df
+        }
+
+        if (path.scope.hasBinding(CLASSNAMES)) {
+          const uniqIdenti = path.scope.generateUidIdentifier(CLASSNAMES)
+          conflictCls = uniqIdenti.name
+        }
+
+        if (path.scope.hasBinding(DEFAULTCSSMODULES)) {
+          cssModules = path.scope.generateUidIdentifier(DEFAULTCSSMODULES)
         }
       }
     }

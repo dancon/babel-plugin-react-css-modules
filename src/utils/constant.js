@@ -8,7 +8,10 @@ const CLASSNAMES = 'classnames'
 
 const CLASSNAMESOURCE = '@pandolajs/classnames'
 
+const DEFAULTCSSMODULES = '_CSSM_'
+
 module.exports = {
   CLASSNAMES,
-  CLASSNAMESOURCE
+  CLASSNAMESOURCE,
+  DEFAULTCSSMODULES
 }
