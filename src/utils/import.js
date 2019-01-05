@@ -21,7 +21,7 @@ function getClassnamesImport (program, importSrc) {
 
 module.exports = {
   getClassnamesImport,
-  insertClassnamesSepc (program, importSpec, importSrc, importDefault, conflictName) {
+  insertClassnamesSepc (program, importSpec, imported, importSrc, importDefault) {
     const classNamesImpoDec = getClassnamesImport(program, importSrc)
 
     if (classNamesImpoDec) {
@@ -38,9 +38,9 @@ module.exports = {
       }
     }
 
-    const identifier = types.identifier(conflictName ? conflictName : importSpec)
-    const importedSpec = types.identifier(importSpec)
-    const classNameDefSpec = importDefault ? types.importDefaultSpecifier(identifier) : types.importSpecifier(identifier, importedSpec)
+    const identifier = types.identifier(importSpec)
+    const importedIdent = types.identifier(imported)
+    const classNameDefSpec = importDefault ? types.importDefaultSpecifier(identifier) : types.importSpecifier(identifier, importedIdent)
     const classnamesImpo = types.importDeclaration([classNameDefSpec], types.stringLiteral(importSrc))
     program.unshiftContainer('body', classnamesImpo)
 

@@ -7,11 +7,12 @@
 const p = require('path')
 const babelPluginSyntaxJSX = require('@babel/plugin-syntax-jsx')
 
-const { getClassName } = require('./utils/attributes')
+const { getClassName, handleStringLiteral } = require('./utils/attributes')
 const { insertClassnamesSepc } = require('./utils/import')
 let { CLASSNAMES, CLASSNAMESOURCE, DEFAULTCSSMODULES } = require('./utils/constant')
 let CLASSNAMEIMPORTDEFAULT = true
 let conflictCls = ''
+let program = null
 
 module.exports = function (babel) {
   const { types: t } = babel
@@ -41,7 +42,41 @@ module.exports = function (babel) {
         }
       },
 
-      JSXElement (path) {
+      JSXAttribute (path) {
+        const { node } = path
+        if (!/^(?:class|style)Name$/.test(node.name.name)) {
+          return
+        }
+
+        path.traverse({
+          StringLiteral (path) {
+            if (path.parentPath.isJSXAttribute()
+              || (path.parentPath.isJSXExpressionContainer() && path.parentPath.parentPath.isJSXAttribute())) {
+              handleStringLiteral(path, {
+                cssModules,
+                program,
+                classnames: {
+                  name: conflictCls ? conflictCls : CLASSNAMES,
+                  source: CLASSNAMESOURCE,
+                  imported: CLASSNAMES,
+                  defaultImport: CLASSNAMEIMPORTDEFAULT
+                }
+              })
+            }
+          },
+
+          ObjectExpression (path) {
+            console.log('object')
+          },
+
+          TemplateLiteral (path) {
+            console.log('template')
+          }
+        })
+      },
+
+      /* JSXElement (path) {
+        return
         const { node } = path
         const { attributes } = node.openingElement
         const attr = getClassName(attributes)
@@ -79,14 +114,17 @@ module.exports = function (babel) {
             className.value = t.jSXExpressionContainer(classNameVal)
             attributes.splice(index, 1, className)
             node.openingElement.attributes = attributes
+          } else if (className && className.value.type === 'JSXExpressionContainer') {
+
           }
         }
 
         path.replaceWith(node)
-      },
+      }, */
 
       Program (path, state) {
         const { opts: { classnames }, filename, cwd } = state
+        program = path
 
         if (classnames) {
           let { name, source, default: df = true } = classnames
