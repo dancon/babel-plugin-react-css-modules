@@ -2,10 +2,7 @@ import './index.less'
 
 const test = 'test'
 const color = 'color'
-const jsx = (<div name='jioho' className={{
-  'test-page': true,
-  'color': test === 'test'
-}} hello='world' styleName={{
+const jsx = (<div name='jioho' className='page' hello='world' styleName={{
   'page-x': true
 }} />)
 

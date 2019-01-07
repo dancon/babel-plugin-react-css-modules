@@ -2,10 +2,7 @@ import { classnames } from "@bbt/bbt-ui/utils";
 import _CSSM_ from './index.less';
 const test = 'test';
 const color = 'color';
-const jsx = <div name='jioho' className={classnames(_CSSM_, {
-  'test-page': true,
-  'color': test === 'test'
-}, {
+const jsx = <div name='jioho' className={classnames(null, null, _CSSM_["page"], {
   'page-x': true
 })} hello='world' />;
 const jsx1 = <div className={classnames(_CSSM_, {
