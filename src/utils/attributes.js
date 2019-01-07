@@ -18,7 +18,7 @@ function getAttribute (attributes, attrName) {
     return b
   })
 
-  return specifyAttr ? { index, attr: specifyAttr} : null
+  return specifyAttr ? { index, attr: specifyAttr } : null
 }
 
 function generateClassnamesCall (funcName, args) {
@@ -46,7 +46,7 @@ function handlerString (str, {
     })
 
     const objExp = t.objectExpression(objProps)
-    expression = generateClassnamesCall(calleeIdent, [cssModules, objExp])
+    expression = generateClassnamesCall(calleeIdent, [ cssModules, objExp ])
   }
 
   return expression
@@ -96,7 +96,7 @@ module.exports = {
 
     const expression = handlerString(value, options)
 
-    path.replaceWith(path.parentPath.isJSXExpressionContainer () ? expression : t.jsxExpressionContainer(expression))
+    path.replaceWith(path.parentPath.isJSXExpressionContainer() ? expression : t.jsxExpressionContainer(expression))
   },
 
   handleObjectExpression (path, {
@@ -107,7 +107,7 @@ module.exports = {
     const { node } = path
 
     const calleeIdent = insertClassnamesSepc(program, name, imported, source, defaultImport)
-    const expression = generateClassnamesCall(calleeIdent, [cssModules, node])
+    const expression = generateClassnamesCall(calleeIdent, [ cssModules, node ])
     path.replaceWith(expression)
   },
 
@@ -126,14 +126,13 @@ module.exports = {
     } else if (handleWithExpression) {
       const objProps = []
       expressions.forEach((item, index) => {
-        const { start, end } = item
         let connPrev = false
         let connNext = false
         const q1 = quasis[index]
         const q2 = quasis[index + 1]
 
         const templateElements = []
-        const templateExpressions = [item]
+        const templateExpressions = [ item ]
 
         const propFunc = (item) => {
           if (item) {
@@ -165,7 +164,7 @@ module.exports = {
         name, source, imported, defaultImport
       } } = options
       const calleeIdent = insertClassnamesSepc(program, name, imported, source, defaultImport)
-      expression = generateClassnamesCall(calleeIdent, [cssModules, objExpression])
+      expression = generateClassnamesCall(calleeIdent, [ cssModules, objExpression ])
     }
 
     path.replaceWith(expression)

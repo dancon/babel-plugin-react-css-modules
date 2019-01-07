@@ -36,7 +36,7 @@ module.exports = function (babel) {
 
         if (specifiers.length === 0) {
           const defaultSpec = t.importDefaultSpecifier(cssModules)
-          const imptDec = t.importDeclaration([defaultSpec], source)
+          const imptDec = t.importDeclaration([ defaultSpec ], source)
           path.replaceWith(imptDec)
           return
         }
@@ -56,7 +56,7 @@ module.exports = function (babel) {
         }
 
         const classnames = {
-          name: conflictCls ? conflictCls : CLASSNAMES,
+          name: conflictCls || CLASSNAMES,
           source: CLASSNAMESOURCE,
           imported: CLASSNAMES,
           defaultImport: CLASSNAMEIMPORTDEFAULT
@@ -64,8 +64,8 @@ module.exports = function (babel) {
 
         path.traverse({
           StringLiteral (path) {
-            if (path.parentPath.isJSXAttribute()
-              || (path.parentPath.isJSXExpressionContainer() && path.parentPath.parentPath.isJSXAttribute())) {
+            if (path.parentPath.isJSXAttribute() ||
+              (path.parentPath.isJSXExpressionContainer() && path.parentPath.parentPath.isJSXAttribute())) {
               handleStringLiteral(path, {
                 cssModules,
                 program,
@@ -104,7 +104,7 @@ module.exports = function (babel) {
           const className = getAttribute(attributes, 'className')
           const styleName = getAttribute(attributes, 'styleName')
 
-          const name = conflictCls ? conflictCls : CLASSNAMES
+          const name = conflictCls || CLASSNAMES
 
           if (!className && styleName) {
             const { attr, index } = styleName
@@ -113,7 +113,7 @@ module.exports = function (babel) {
             if (t.isJSXExpressionContainer(value) && t.isObjectExpression(expression)) {
               const calleeIdent = insertClassnamesSepc(program, name, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
               const callee = t.identifier(calleeIdent)
-              value.expression = t.callExpression(callee, [t.nullLiteral(), expression])
+              value.expression = t.callExpression(callee, [ t.nullLiteral(), expression ])
             }
 
             attr.name = t.jsxIdentifier('className')
@@ -122,7 +122,7 @@ module.exports = function (babel) {
           }
 
           if (className && styleName) {
-            const { attr: c, index: ci } = className
+            const { attr: c } = className
             const { attr: s, index: si } = styleName
 
             const { value } = s
@@ -143,7 +143,7 @@ module.exports = function (babel) {
               if (t.isTemplateLiteral(expression) || t.isMemberExpression(expression)) {
                 const calleeIdent = insertClassnamesSepc(program, name, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
                 const callee = t.identifier(calleeIdent)
-                classNameAV.expression = t.callExpression(callee, [t.nullLiteral(), t.nullLiteral(), expression, styArg])
+                classNameAV.expression = t.callExpression(callee, [ t.nullLiteral(), t.nullLiteral(), expression, styArg ])
               }
 
               if (t.isCallExpression(expression)) {
