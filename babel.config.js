@@ -1,5 +1,7 @@
 module.exports = {
   plugins: [
-    ['./src/index.js']
+    ['./src/index.js', {
+      handleTemplate: true
+    }]
   ]
 }

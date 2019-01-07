@@ -114,7 +114,7 @@ module.exports = {
   handleTemplateLiteralExpression (path, options, handleWithExpression = false) {
     const { node: { expressions, quasis } } = path
 
-    let expression = null
+    let expression = path.node
 
     if (expressions.length === 0) {
       const [ tempEle ] = quasis
