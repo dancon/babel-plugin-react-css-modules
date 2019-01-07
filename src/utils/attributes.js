@@ -52,37 +52,6 @@ function handlerString (str, {
   return expression
 }
 
-function handleTemplateElement (templateElement, begin = true) {
-  const { cooked } = templateElement.value
-  let reg = begin ? /\s+$/ : /^\s+/
-  const tokens = cooked.trim().split(/\s+/)
-  templateElement.value = {
-    raw: '',
-    cooked: ''
-  }
-  if (cooked && !reg.test(cooked)) {
-    const raw = begin ? tokens.pop() : tokens.shift()
-    const tEle = t.templateElement({
-      raw,
-      cooked: raw
-    }, !begin)
-    return {
-      conn: true,
-      element: tEle,
-      restTokens: tokens
-    }
-  }
-
-  return {
-    conn: false,
-    element: t.templateElement({
-      raw: '',
-      cooked: ''
-    }),
-    restTokens: tokens
-  }
-}
-
 module.exports = {
   getAttribute,
 
@@ -125,38 +94,39 @@ module.exports = {
       expression = handlerString(cooked, options)
     } else if (handleWithExpression) {
       const objProps = []
-      expressions.forEach((item, index) => {
-        let connPrev = false
-        let connNext = false
-        const q1 = quasis[index]
-        const q2 = quasis[index + 1]
 
-        const templateElements = []
-        const templateExpressions = [ item ]
+      const quasisStr = quasis.map(item => {
+        const { cooked } = item.value
+        return cooked
+      })
 
-        const propFunc = (item) => {
-          if (item) {
-            const key = t.stringLiteral(item)
-            const val = t.booleanLiteral(true)
-            objProps.push(t.objectProperty(key, val))
-          }
+      const fakeClassNames = quasisStr.join('{@}').split(/\s+/)
+
+      fakeClassNames.forEach(v => {
+        if (!/\{@\}/.test(v)) {
+          const key = t.stringLiteral(v)
+          const val = t.booleanLiteral(true)
+          objProps.push(t.objectProperty(key, val))
+        } else if (/^\{@\}$/.test(v)) {
+          objProps.push(t.objectProperty(expressions.shift(), t.booleanLiteral(true), true))
+        } else {
+          const tele = []
+          const texp = []
+          const vts = v.split(/[{}]/)
+          vts.forEach((vt, index) => {
+            if (vt !== '@') {
+              tele.push(
+                t.templateElement({
+                  raw: vt,
+                  cooked: vt
+                }, index === (vts.length - 1))
+              )
+            } else {
+              texp.push(expressions.shift())
+            }
+          })
+          objProps.push(t.objectProperty(t.templateLiteral(tele, texp), t.booleanLiteral(true), true))
         }
-        if (q1) {
-          const { element, conn, restTokens } = handleTemplateElement(q1, true)
-          restTokens.forEach(propFunc)
-          templateElements.push(element)
-          connPrev = conn
-        }
-
-        if (q2) {
-          const { element, conn, restTokens } = handleTemplateElement(q2, false)
-          connNext = conn
-          templateElements.push(element)
-          restTokens.forEach(propFunc)
-        }
-
-        const key = (!connPrev && !connNext) ? item : t.templateLiteral(templateElements, templateExpressions)
-        objProps.push(t.objectProperty(key, t.booleanLiteral(true), true))
       })
 
       const objExpression = t.objectExpression(objProps)

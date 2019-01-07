@@ -7,6 +7,5 @@ const jsx = <div className={classnames(_CSSM_, {
   "class2": true,
   [`color-${color}`]: true,
   [`${fontSize}-font`]: true,
-  [`${color}-and-`]: true,
-  [fontSize]: true
+  [`${color}-and-${fontSize}`]: true
 })}></div>;

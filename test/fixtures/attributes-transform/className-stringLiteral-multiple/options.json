@@ -1,8 +1,8 @@
 {
   "sourceType": "module",
   "plugins": [
-    "../../../../src/index.js", {
+    ["../../../../src/index.js", {
       "handleTemplate": true
-    }
+    }]
   ]
 }
