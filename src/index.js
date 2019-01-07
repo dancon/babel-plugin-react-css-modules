@@ -25,6 +25,7 @@ module.exports = function (babel) {
   let cssModules = t.identifier(DEFAULTCSSMODULES)
 
   return {
+    name: 'react css modules',
     inherits: babelPluginSyntaxJSX.default,
     visitor: {
       ImportDeclaration (path) {

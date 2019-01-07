@@ -74,7 +74,9 @@ module.exports = {
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  // modulePathIgnorePatterns: [],
+  modulePathIgnorePatterns: [
+    'test/fixtures/'
+  ],
 
   // Activates notifications for test results
   // notify: false,
@@ -124,7 +126,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "node",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -144,7 +146,7 @@ module.exports = {
   // ],
 
   // The regexp pattern Jest uses to detect test files
-  // testRegex: "",
+  testRegex: './test/.+\\.js$',
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -176,5 +178,5 @@ module.exports = {
   // watchPathIgnorePatterns: [],
 
   // Whether to use watchman for file crawling
-  // watchman: true,
+  // watchman: true
 };

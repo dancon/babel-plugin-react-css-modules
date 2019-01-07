@@ -1,9 +1,5 @@
 module.exports = {
   plugins: [
-    ['./src/index.js', { classnames: {
-      name: 'classnames',
-      source: '@bbt/bbt-ui/utils',
-      default: false
-    }, handleTemplate: true }]
+    ['./src/index.js']
   ]
 }
