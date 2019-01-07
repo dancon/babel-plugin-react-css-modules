@@ -1,0 +1,9 @@
+{
+  "extends": "pandola/standard",
+  "globals": {
+    "_DEV_": false
+  },
+  "rules": {
+    "no-console": ["error", { "allow": ["log", "warn", "error"] }]
+  }
+}
