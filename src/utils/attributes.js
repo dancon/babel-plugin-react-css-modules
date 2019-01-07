@@ -52,26 +52,51 @@ function handlerString (str, {
   return expression
 }
 
+function handleTemplateElement (templateElement, begin = true) {
+  const { cooked } = templateElement.value
+  let reg = begin ? /\s+$/ : /^\s+/
+  const tokens = cooked.trim().split(/\s+/)
+  templateElement.value = {
+    raw: '',
+    cooked: ''
+  }
+  if (cooked && !reg.test(cooked)) {
+    const raw = begin ? tokens.pop() : tokens.shift()
+    const tEle = t.templateElement({
+      raw,
+      cooked: raw
+    }, !begin)
+    return {
+      conn: true,
+      element: tEle,
+      restTokens: tokens
+    }
+  }
+
+  return {
+    conn: false,
+    element: t.templateElement({
+      raw: '',
+      cooked: ''
+    }),
+    restTokens: tokens
+  }
+}
+
 module.exports = {
   getClassName (attributes) {
     return getAttribute(attributes, 'className')
   },
 
-  handleStringLiteral (path, { cssModules, program, classnames: {
-    name, source, imported, defaultImport
-  } }) {
+  handleStringLiteral (path, options) {
     const { node } = path
     const { value } = node
 
-    if (!value) {
+    if (!value.trim()) {
       return
     }
 
-    const expression = handlerString(value, {
-      cssModules, program, classnames: {
-        name, source, imported, defaultImport
-      }
-    })
+    const expression = handlerString(value, options)
 
     path.replaceWith(path.parentPath.isJSXExpressionContainer () ? expression : t.jsxExpressionContainer(expression))
   },
@@ -88,29 +113,61 @@ module.exports = {
     path.replaceWith(expression)
   },
 
-  handleTemplateLiteralExpression (path, {
-    program,
-    cssModules,
-    classnames: {
-      name, source, imported, defaultImport
-    }
-  }) {
+  handleTemplateLiteralExpression (path, options) {
     const { node: { expressions, quasis } } = path
 
     let expression = null
+
     if (expressions.length === 0) {
       const [ tempEle ] = quasis
       const { cooked } = tempEle.value
-      if (!cooked) {
+      if (!cooked.trim()) {
         return
       }
-      expression = handlerString(cooked, {
-        program, cssModules, classnames: {
-          name, source, imported, defaultImport
-        }
-      })
+      expression = handlerString(cooked, options)
     } else {
+      const objProps = []
+      expressions.forEach((item, index) => {
+        const { start, end } = item
+        let connPrev = false
+        let connNext = false
+        const q1 = quasis[index]
+        const q2 = quasis[index + 1]
 
+        const templateElements = []
+        const templateExpressions = [item]
+
+        const propFunc = (item) => {
+          if (item) {
+            const key = t.stringLiteral(item)
+            const val = t.booleanLiteral(true)
+            objProps.push(t.objectProperty(key, val))
+          }
+        }
+        if (q1) {
+          const { element, conn, restTokens } = handleTemplateElement(q1, true)
+          restTokens.forEach(propFunc)
+          templateElements.push(element)
+          connPrev = conn
+        }
+
+        if (q2) {
+          const { element, conn, restTokens } = handleTemplateElement(q2, false)
+          connNext = conn
+          templateElements.push(element)
+          restTokens.forEach(propFunc)
+        }
+
+        const key = (!connPrev && !connNext) ? item : t.templateLiteral(templateElements, templateExpressions)
+        objProps.push(t.objectProperty(key, t.booleanLiteral(true), true))
+      })
+
+      const objExpression = t.objectExpression(objProps)
+      const { program, cssModules, classnames: {
+        name, source, imported, defaultImport
+      } } = options
+      const calleeIdent = insertClassnamesSepc(program, name, imported, source, defaultImport)
+      expression = generateClassnamesCall(calleeIdent, [cssModules, objExpression])
     }
 
     path.replaceWith(expression)
