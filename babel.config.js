@@ -4,6 +4,6 @@ module.exports = {
       name: 'classnames',
       source: '@bbt/bbt-ui/utils',
       default: false
-    }, templateLiteralWithExpression: true }]
+    }, handleTemplate: true }]
   ]
 }

@@ -111,7 +111,7 @@ module.exports = {
     path.replaceWith(expression)
   },
 
-  handleTemplateLiteralExpression (path, options) {
+  handleTemplateLiteralExpression (path, options, handleWithExpression = false) {
     const { node: { expressions, quasis } } = path
 
     let expression = null
@@ -123,7 +123,7 @@ module.exports = {
         return
       }
       expression = handlerString(cooked, options)
-    } else {
+    } else if (handleWithExpression) {
       const objProps = []
       expressions.forEach((item, index) => {
         const { start, end } = item

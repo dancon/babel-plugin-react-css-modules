@@ -18,6 +18,7 @@ let { CLASSNAMES, CLASSNAMESOURCE, DEFAULTCSSMODULES } = require('./utils/consta
 let CLASSNAMEIMPORTDEFAULT = true
 let conflictCls = ''
 let program = null
+let HTLWE = false
 
 module.exports = function (babel) {
   const { types: t } = babel
@@ -26,7 +27,7 @@ module.exports = function (babel) {
   return {
     inherits: babelPluginSyntaxJSX.default,
     visitor: {
-      ImportDeclaration (path, state) {
+      ImportDeclaration (path) {
         const { node: { specifiers, source } } = path
 
         if (!/\.(?:less|css|s[ac]ss)$/i.test(source.value)) {
@@ -89,7 +90,7 @@ module.exports = function (babel) {
                 program,
                 cssModules,
                 classnames
-              })
+              }, HTLWE)
             }
           }
         })
@@ -158,9 +159,10 @@ module.exports = function (babel) {
       },
 
       Program (path, state) {
-        const { opts: { classnames }, filename, cwd } = state
+        const { opts: { classnames, handleTemplate = false }, filename, cwd } = state
         program = path
 
+        HTLWE = handleTemplate
         if (classnames) {
           let { name, source, default: df = true } = classnames
 
