@@ -5,9 +5,11 @@ const color = 'color';
 const jsx = <div name='jioho' className={classnames(_CSSM_, {
   'test-page': true,
   'color': test === 'test'
+}, {
+  'page-x': true
 })} hello='world' />;
 const jsx1 = <div className={classnames(_CSSM_, {
   "a-b": true,
   "bbbb": true,
   [`aaaa${xxxx}`]: true
-})}></div>;
+}, `page test color`)}></div>;

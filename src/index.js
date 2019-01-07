@@ -8,7 +8,7 @@ const p = require('path')
 const babelPluginSyntaxJSX = require('@babel/plugin-syntax-jsx')
 
 const {
-  getClassName,
+  getAttribute,
   handleStringLiteral,
   handleObjectExpression,
   handleTemplateLiteralExpression
@@ -50,12 +50,8 @@ module.exports = function (babel) {
       JSXAttribute (path) {
         const { node } = path
         const { name } = node.name
-        if (!/^(?:class|style)Name$/.test(name)) {
+        if (!/^className$/.test(name)) {
           return
-        }
-
-        if (name === 'styleName') {
-          cssModules = t.nullLiteral()
         }
 
         const classnames = {
@@ -101,12 +97,63 @@ module.exports = function (babel) {
 
       JSXElement: {
         exit (path) {
-          /* className.value = t.jSXExpressionContainer(classNameVal)
-          attributes.splice(index, 1, className)
+          const { node } = path
+          const { attributes } = node.openingElement
+
+          const className = getAttribute(attributes, 'className')
+          const styleName = getAttribute(attributes, 'styleName')
+
+          const name = conflictCls ? conflictCls : CLASSNAMES
+
+          if (!className && styleName) {
+            const { attr, index } = styleName
+            const { value } = attr
+            const { expression } = value
+            if (t.isJSXExpressionContainer(value) && t.isObjectExpression(expression)) {
+              const calleeIdent = insertClassnamesSepc(program, name, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
+              const callee = t.identifier(calleeIdent)
+              value.expression = t.callExpression(callee, [null, expression])
+            }
+
+            attr.name = t.jsxIdentifier('className')
+
+            attributes.splice(index, 1, attr)
+          }
+
+          if (className && styleName) {
+            const { attr: c, index: ci } = className
+            const { attr: s, index: si } = styleName
+
+            const { value } = s
+            let styArg = null
+            if (t.isJSXExpressionContainer(value)) {
+              styArg = value.expression
+            } else {
+              styArg = value
+            }
+
+            attributes.splice(si, 1)
+
+            const { value: classNameAV } = c
+
+            if (t.isJSXExpressionContainer(classNameAV)) {
+              const { expression } = classNameAV
+
+              if (t.isTemplateLiteral(expression) || t.isMemberExpression(expression)) {
+                const calleeIdent = insertClassnamesSepc(program, name, CLASSNAMES, CLASSNAMESOURCE, CLASSNAMEIMPORTDEFAULT)
+                const callee = t.identifier(calleeIdent)
+                className.expression = t.callExpression(calleeIdent, [null, null, expression, styArg])
+              }
+
+              if (t.isCallExpression(expression)) {
+                expression.arguments.push(styArg)
+              }
+            }
+          }
+
           node.openingElement.attributes = attributes
 
-          path.replaceWith(node) */
-          console.log('exit')
+          path.replaceWith(node)
         }
       },
 

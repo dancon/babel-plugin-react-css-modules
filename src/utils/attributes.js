@@ -84,9 +84,7 @@ function handleTemplateElement (templateElement, begin = true) {
 }
 
 module.exports = {
-  getClassName (attributes) {
-    return getAttribute(attributes, 'className')
-  },
+  getAttribute,
 
   handleStringLiteral (path, options) {
     const { node } = path
