@@ -60,4 +60,62 @@ We add local CSS class to element via `className` prop as usual, and add global 
 
 ## Usage
 
+### Configurataion
+
+babel.config.js
+
+```js
+  {
+    plugins: [
+      ['@pandolajs/react-css-modules', options]
+    ]
+  }
+```
+
+## options?: {classname?: {}, handleTemplate?: boolean}
+
+You can specify a option to custom plugin behavior.
+
+### classnames?: {name: string, source: string, default: boolean}
+
+#### classnames.name: string specify the name of classnames method
+
+#### classnames.source: string specify the module of classnames, default '@pandolajs/classname', you can also specify a relative or absolute path base your project
+
+### classnames.default: boolean speify import as default or destruct from module, default value is true
+
+configuration
+
+```js
+  {
+    plugins: [
+      ['@pandolajs/react-css-modules', {
+        classnames: {
+          name: 'cls',
+          source: '@scope/your-classname',
+          default: false
+        }
+      }]
+    ]
+  }
+```
+
+input.js
+
+```js
+  <div className="class1 class2" />
+```
+
+output.js
+
+```js
+  import { cls } from "@scope/your-classname";
+  <div className={cls(_CSSM_, {
+    "class1": true,
+    "class2": true
+  })} />
+```
+
 ## How it works
+
+You can find more transform example in [test](./test/fixtures/) directory.
