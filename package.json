@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --fix src/**",
+    "release": "standard-version",
     "start": "babel examples/index.js --out-dir examples/dist",
     "debug": "node --nolazy --inspect-brk=9229 ./node_modules/.bin/babel examples/index.js --out-dir examples/dist"
   },
