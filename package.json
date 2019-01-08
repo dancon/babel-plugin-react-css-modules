@@ -1,6 +1,6 @@
 {
   "name": "@pandolajs/babel-plugin-react-css-modules",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CSS Modules for react",
   "main": "src/index.js",
   "scripts": {
