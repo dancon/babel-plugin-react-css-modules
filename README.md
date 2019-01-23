@@ -102,7 +102,7 @@ You can specify a option to custom plugin behavior.
 
 - handleTemplate?: boolean indicate the plugin wether to handle `className={`btn-${color}`}` case. Default is false.
 
-> You should be careful to set this option to `true` when in an old project, becasue there maybe some code like `className={`{styles.btn} ${styles.btnSuccess}`}`, It will cause unexpected layout of your app. You can find the deep reason of [here](./test/fixtures/className-stringLiteral-multiple/outpu.mjs).
+> You should be careful to set this option to `true` when in an old project, becasue there maybe some code like `className={`{styles.btn} ${styles.btnSuccess}`}` already, it will cause unexpected layout of your app after tranformation by the plugin. You can find the deep reason of [here](https://github.com/dancon/babel-plugin-react-css-modules/tree/master/test/fixtures/attributes-transform/className-stringLiteral-multiple).
 
 configuration
 
@@ -138,4 +138,4 @@ output.js
 
 ## How it works
 
-You can find more transform example in [test](./test/fixtures/) directory.
+You can find more transform example in [test](https://github.com/dancon/babel-plugin-react-css-modules/tree/master/test/fixtures) directory.
