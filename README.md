@@ -1,6 +1,6 @@
 # @pandolajs/babel-plugin-react-css-modules
 
-CSS Modules for react application.
+CSS Modules for react application. Find more details [here](https://github.com/dancon/babel-plugin-react-css-modules#readme)
 
 ## Motivaion
 
@@ -62,6 +62,22 @@ We add local CSS class to element via `className` prop as usual, and add global 
 
 ### Configurataion
 
+- Step1: Install the plugin.
+
+```bash
+  npm i -D @pandolajs/babel-plugin-react-css-modules
+```
+
+- Step2: Install the `@pandolajs/classnames` as a dependency of you project.
+
+```bash
+  npm i -S @pandolajs/classnames
+```
+
+> `@pandolajs/classnames` is a small javascript library without any dependencies, it is used as a runtime dependency when plugin tranform your code. You can provide your own implamentation of course like `@pandolajs/classnames` [API](https://github.com/dancon/classnames).
+
+- Step3: config plugin in your `babel.config.js` or `.babelrc`.
+
 babel.config.js
 
 ```js
@@ -72,17 +88,17 @@ babel.config.js
   }
 ```
 
-## options?: {classname?: {}, handleTemplate?: boolean}
+- options?: {classname?: {}, handleTemplate?: boolean}
 
 You can specify a option to custom plugin behavior.
 
-### classnames?: {name: string, source: string, default: boolean}
+- classnames?: {name: string, source: string, default: boolean}
 
-#### classnames.name: string specify the name of classnames method
+  - classnames.name: string specify the name of classnames method
 
-#### classnames.source: string specify the module of classnames, default '@pandolajs/classname', you can also specify a relative or absolute path base your project
+  - classnames.source: string specify the module of classnames, default '@pandolajs/classname', you can also specify a relative or absolute path base your project
 
-### classnames.default: boolean speify import as default or destruct from module, default value is true
+  - classnames.default: boolean speify import as default or destruct from module, default value is true
 
 configuration
 

@@ -1,5 +1,9 @@
-import './index.less'
+/**
+ * 福卡明细
+ */
 
-const color = 'blue'
-const fontSize = 'small'
-const jsx = (<div className={`class1 class2 color-${color} ${fontSize}-font ${color}-and-${fontSize}`}></div>)
+import styles from './index.less'
+
+const ele = (<div className={styles.name}></div>)
+
+const ele2 = (<div className="name"></div>)
