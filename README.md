@@ -88,7 +88,7 @@ babel.config.js
   }
 ```
 
-- options?: {classname?: {}, handleTemplate?: boolean}
+### options?: {classname?: {}, handleTemplate?: boolean}
 
 You can specify a option to custom plugin behavior.
 
@@ -99,6 +99,10 @@ You can specify a option to custom plugin behavior.
   - classnames.source: string specify the module of classnames, default '@pandolajs/classname', you can also specify a relative or absolute path base your project
 
   - classnames.default: boolean speify import as default or destruct from module, default value is true
+
+- handleTemplate?: boolean indicate the plugin wether to handle `className={`btn-${color}`}` case. Default is false.
+
+> You should be careful to set this option to `true` when in an old project, becasue there maybe some code like `className={`{styles.btn} ${styles.btnSuccess}`}`, It will cause unexpected layout of your app. You can find the deep reason of [here](./test/fixtures/className-stringLiteral-multiple/outpu.mjs).
 
 configuration
 
